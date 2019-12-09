@@ -1,0 +1,21 @@
+/* specific css*/
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #F0C6C6;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.mycontainer {
+  padding-left: 50px;
+  padding-right: 50px;
+}
+
+body {
+  background-color: #FFFFFF;
+}
+
