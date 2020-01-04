@@ -1,3 +1,4 @@
+
 <div class="container mt-4" >
   <h2>
     Your todo table
@@ -8,17 +9,40 @@
     <tr>
       <th scope="col">Cliquez sur une Todo pour la sélectionner</th>
     </tr>
+    <br>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Description</th>
+      <th scope="col">Date</th>
+      <th scope="col">Priorité</th>
+      <th scope="col">Etat</th>
+      <th scope="col"> </th>
+    </tr>
     </thead>
     <tbody>
     <tr *ngFor="let Task of tasks" class="table-borderless">
-      <th scope="row" >
-        <a (click)="select_task(Task.Name)">{{Task.Name}}</a>
-          <a class="btn text-white btn-primary float-right" (click)="editTask(Task)">Edit</a>
-          <a scope="" class="mylittlefont" >{{Task.date}}</a>
-        </th>
+      <th scope="col" class="table-responsive">
+        <a class="col-lg-4">{{Task.name}}</a>
+      </th>
+      <th>
+        <a scope="col" class="description" >{{Task.description}}</a>
+      </th>
+      <th>
+        <a scope="col" class="mylittlefont text-black-50 " >{{Task.date}}</a>
+      </th>
+      <th>
+        <a scope="col" class="font-weight-light float-center">{{Task.priority}}</a>
+      </th>
+      <th>
+        <a *ngIf="Task.state == 0 " scope="col" class="font-weight-light">{{Task.state}}</a>
+      </th>
+      <th>
+        <a class="btn text-white btn-primary float-right" routerLink="/Task/{{Task.id}}" routerLinkActive="active" (click)="edit(Task.name)">Edit</a>
+        <a class="btn text-white btn-primary float-right" routerLink="/" routerLinkActive="active" (click)="delete_task(Task.name)">Done</a>
+      </th>
     </tr>
-    <div class="text-right">
-      <a class="btn text-white btn-primary ">New Task</a>
+    <div class="float-lg-right">
+      <a class="btn text-white btn-primary">New Task</a>
     </div>
     </tbody>
   </table>

@@ -4,7 +4,11 @@ import { Todo } from '../../interfaces/todo';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { RouterModule, Routes } from '@angular/router';
 import { HttpClient} from '@angular/common/http';
-
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {TaskListComponent} from '../task-list/task-list.component';
+const appRoutes: Routes = [
+  { path: 'Todo' },
+];
 @Component({
   selector: 'todo-list',
   templateUrl: './todo-list.component.html',
@@ -25,107 +29,69 @@ import { HttpClient} from '@angular/common/http';
   ]
 })
 export class TodoListComponent implements OnInit {
-  todos: Todo[];
   Name: string;
   TodoId: number;
   owner_id: number;
   _httpClient: HttpClient;
-
-
+  todos;
+  TodoForm;
+  formBuilder: FormBuilder;
   constructor() {}
 
   ngOnInit() {
     this.TodoId = 4;
     this.Name = ""; //mettre nom todo ici
+    this.getTodos();
+  }
 
-    this.todos = [
-      //début de json
-      {
-        'id': 1,
-        'Name': 'Finish Angular Screencast',
-        'editing': false,
+  getTodos(){
+    //this.todos = this._httpClient.get('http://127.0.0.1:8000/Web/api/task/getTodos');
+    this.todos = [{
+      id : '1',
+      Name : 'To Do For Work'
       },
       {
-        'id': 2,
-        'Name': 'Take over world',
-        'editing': false,
+        id : '2',
+        Name : 'To Do For Housework'
       },
       {
-        'id': 3,
-        'Name': 'One more thing',
-        'editing': false,
-      },{
-        'id': 4,
-        'Name': 'One more thing',
-        'editing': false,
-      }
-      //fin de json ici
-      ,
+        id : '3',
+        Name : 'Reminders'
+      },
     ];
   }
 
-
-  select_todo(name): void {
-
-    for (let element in this.todos){
-      alert(this.todos[element].Name);
-    }
+  getTodo(name) {
+    this.todos = this._httpClient.get('http://127.0.0.1:8000/api/task/getTodo/' + name.toString());
   }
 
-  edit(): void{
 
+
+  modifying(name){
+    this.TodoForm = this.formBuilder.group({
+      name:name
+    });
+    this.Name= this.TodoForm.name
+  }
+
+  edit(name): void {
+    this.getTodo(name);
+    this.modifying(this.todos.Name);
+    return;
   }
   addTodo(): void {
-    if (this.Name.trim().length === 0) {
-      return;
-    }
 
-    this.todos.push({
-      id: this.TodoId,
-      title: this.Name,
-      completed: false,
-      editing: false
-    })
-
-    this.Name = '';
-    this.TodoId++;
   }
 
-  editTodo(todo: Todo): void {
-    todo.editing = true;
+  editTodo(name): void {
+    this.modifying(name);
   }
 
-  doneEdit(todo: Todo): void {
-    if (todo.title.trim().length === 0) {
-    }
-    todo.editing = false;
+  deleteTodo(name): void {
+
   }
 
-  cancelEdit(todo: Todo): void {
-    todo.editing = false;
-  }
-
-  deleteTodo(id: number): void {
-    this.todos = this.todos.filter(todo => todo.id !== id);
-  }
-
-  remaining(): number {
-    return this.todos.filter(todo => !todo.completed).length;
-  }
-
-  atLeastOneCompleted(): boolean {
-    return this.todos.filter(todo => todo.completed).length > 0;
-  }
-
-  clearCompleted(): void {
-    this.todos = this.todos.filter(todo => !todo.completed);
-  }
-
-  checkAllTodos(): void {
-    this.todos.forEach(todo => todo.completed = (<HTMLInputElement>event.target).checked);
-  }
-
-  anyRemaining(): boolean {
-    return this.remaining() !== 0;
+  select_todo(name): void {
+    alert(name)
   }
 }

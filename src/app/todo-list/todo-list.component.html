@@ -1,21 +1,17 @@
 <div class="container mt-4" >
-  <h2>
-    Your todo table
-  </h2>
   <table class="table table-striped">
-    <caption> List of every todo you have</caption>
     <thead>
     <tr>
-      <th scope="col">Cliquez sur une Todo pour la sélectionner</th>
+      <th scope="col" class="font-italic font-weight-light">Cliquez sur une Todo pour la sélectionner</th>
     </tr>
     </thead>
     <tbody>
     <tr *ngFor="let Todo of todos" class="table-borderless">
-
-      <th scope="row" (click)="select_todo(Todo.Name)"> {{Todo.Name}} </th>
+      <th scope="row" (click)="select_todo(Todo.Name)">{{Todo.Name}}</th>
+      <a class="btn text-white btn-dark" routerLink="EditTodo" routerLinkActive="active">Edit</a>
     </tr>
     <div class="text-right">
-      <a class="btn text-white btn-primary ">New Task</a>
+      <a class="btn text-white btn-dark" (click)="addTodo()">New Todo</a>
     </div>
     </tbody>
   </table>

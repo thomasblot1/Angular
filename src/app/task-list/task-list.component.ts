@@ -1,7 +1,7 @@
 // @ts-ignore
 import { Task } from '../../interfaces/task';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { RouterModule, Routes } from '@angular/router';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 
@@ -23,118 +23,86 @@ import {HttpClient} from '@angular/common/http';
 })
 export class TaskListComponent implements OnInit {
 
-  tasks: Task[];
+  TaskForm;
+  tasks;
   Name: string;
   TaskId: number;
   owner_id: number;
   _httpClient: HttpClient;
 
 
-  constructor() {}
+  constructor(private formBuilder: FormBuilder) {}
 
   ngOnInit() {
-    this.TaskId = 4;
-    this.Name = ""; //mettre nom todo ici
 
-    this.tasks = [
+    this.TaskId = 4;
+    this.Name = ""; //mettre nom todo ic
+    this.tasks= [
       //début de json
       {
         'id': 1,
-        'todo_id': 'Nom d une tache',
-        'Name': 'tache 1',
-        'description': 'description 1',
-        'date': '2019-10-22',
-        'priority': 2,
-        'state':1,
+        'Name': 'Finish Angular Screencast',
         'editing': false,
+        'date' : '19/09/2019',
+        'description': 'Job for the web architecture',
+        'priority' : 5,
+        'todo': 'work',
+        'State' : 'completed'
       },
       {
         'id': 2,
-        'todo_id': 'Nom d une tache',
-        'Name': 'tache 2',
-        'description': 'description 2',
-        'date': '2019-10-22',
-        'priority': 1,
-        'state':1,
+        'Name': 'Take over world',
         'editing': false,
+        'date' : '29/09/2019'
       },
       {
         'id': 3,
-        'todo_id': 'Nom d une tache',
-        'Name': 'tache 3',
-        'description': 'description 3',
-        'date': '2019-10-22',
-        'priority': 1,
-        'state':1,
+        'Name': 'One more thing',
         'editing': false,
+        'date' : '25/10/2019'
       },
-    ];
+    ];//this.getTasksFromAPI();
   }
 
-
-
-
-  select_task(name): void {
-    for (let element in this.tasks){
-      alert(this.tasks[element].Name);
-    }
-  }
-
-  edit(): void{
+  createTaskForm(){
+    this.TaskForm = this.formBuilder.group({
+      name:'',
+      Description:'',
+      Priority :'',
+      Todo:''
+    });
 
   }
-  addTask(): void {
-    if (this.Name.trim().length === 0) {
-      return;
-    }
 
-    this.tasks.push({
-      id: this.TaskId,
-      Name: this.Name,
-      completed: false,
-      editing: false
-    })
-
-    this.Name = '';
-    this.TaskId++;
+  getTasks(){
+    this.tasks = this._httpClient.get('http://127.0.0.1:8000/api/task/getTasks');
   }
 
-  editTask(task: Task): void {
-
-    task.editing = true;
+  getTask(name) {
+    this.tasks = this._httpClient.get('http://127.0.0.1:8000/api/task/getTask/' + name.toString());
   }
 
-  doneEdit(task: Task): void {
-    if (task.title.trim().length === 0) {
-    }
-    task.editing = false;
+  delete_task(name): void {
+    this._httpClient.get('http://127.0.0.1:8000/api/task/delete/'+name.toString());
+    this.getTasks();
   }
-
-  cancelEdit(task: Task): void {
-    task.editing = false;
+  modifying(Name,Description,Priority, State){// All the args must be strings
+    this.TaskForm = this.formBuilder.group({
+      name: Name,
+      Description: Description,
+      Priority : Priority,
+      State: State
+    });
   }
-
-  deleteTask(id: number): void {
-    this.tasks = this.tasks.filter(task => task.id !== id);
+  updateTask() {
+    this._httpClient.put('http://127.0.0.1:8000/api/task/edit/' + this.tasks.Name.toString(), this.tasks.todo.toString()+ this.tasks.Name.toString()+  this.tasks.Description.toString() + this.tasks.Priority.toString());
+    this.tasks.State.toString();
   }
-
-  remaining(): number {
-    return this.tasks.filter(task => !task.completed).length;
-  }
-
-  atLeastOneCompleted(): boolean {
-    return this.tasks.filter(task => task.completed).length > 0;
-  }
-
-  clearCompleted(): void {
-    this.tasks = this.tasks.filter(task => !task.completed);
-  }
-
-  checkAlltasks(): void {
-    this.tasks.forEach(task => task.completed = (<HTMLInputElement>event.target).checked);
-  }
-
-  anyRemaining(): boolean {
-    return this.remaining() !== 0;
+  edit(name): void {
+    this.getTask(name);
+    this.modifying(this.tasks.Name, this.tasks.Description, this.tasks.Priority, this.tasks.State);
+    this.updateTask();
+    this.getTasks();
+    return;
   }
 }
