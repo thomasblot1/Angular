@@ -34,18 +34,24 @@ export class TodoListComponent implements OnInit {
   owner_id: number;
   _httpClient: HttpClient;
   todos;
-  TodoForm;
-  formBuilder: FormBuilder;
-  constructor() {}
+  TodoForm : FormGroup;
+  constructor(private formBuilder : FormBuilder) {}
 
   ngOnInit() {
+
+    this.initForm();
     this.TodoId = 4;
     this.Name = ""; //mettre nom todo ici
     this.getTodos();
   }
+  initForm() {
+    this.TodoForm = this.formBuilder.group({
+      Name: ''
+    });
+  }
 
   getTodos(){
-    //this.todos = this._httpClient.get('http://127.0.0.1:8000/Web/api/task/getTodos');
+    //this.todos = this._httpClient.get('http://127.0.0.1:8000/Web/api/todo/getTodos');
     this.todos = [{
       id : '1',
       Name : 'To Do For Work'
@@ -62,7 +68,7 @@ export class TodoListComponent implements OnInit {
   }
 
   getTodo(name) {
-    this.todos = this._httpClient.get('http://127.0.0.1:8000/api/task/getTodo/' + name.toString());
+    this.todos = this._httpClient.get( + name.toString());
   }
 
 
@@ -71,7 +77,7 @@ export class TodoListComponent implements OnInit {
     this.TodoForm = this.formBuilder.group({
       name:name
     });
-    this.Name= this.TodoForm.name
+
   }
 
   edit(name): void {
@@ -94,4 +100,6 @@ export class TodoListComponent implements OnInit {
   select_todo(name): void {
     alert(name)
   }
+
+
 }
